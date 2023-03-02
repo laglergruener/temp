@@ -1,0 +1,39 @@
+{
+  "displayName": "Add Tag with current date to a resource",
+  "policyType": "Custom",
+  "mode": "Indexed",
+  "description": "Adds the specified tag and current date [UTC] as value when any resource missing this tag is created or updated. If the tag exists with a different value it will not be changed. Does not modify tags on resource groups.",
+  "metadata": {
+    "category": "Custom_Tags"
+  },
+  "parameters": {
+    "tagName": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Tag Name",
+        "description": "Name of the tag, such as 'environment'"
+      }
+    }
+  },
+  "policyRule": {
+    "if": {
+      "field": "[concat('tags[', parameters('tagName'), ']')]",
+      "exists": "false"
+    },
+    "then": {
+      "effect": "modify",
+      "details": {
+        "roleDefinitionIds": [
+          "/providers/microsoft.authorization/roleDefinitions/4a9ae827-6dc8-4573-8ac7-8239d42aa03f"
+        ],
+        "operations": [
+          {
+            "operation": "add",
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "value": "[utcNow()]"
+          }
+        ]
+      }
+    }
+  }
+}
